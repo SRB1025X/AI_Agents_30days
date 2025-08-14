@@ -1,0 +1,41 @@
+# ---- Python ----
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pkl
+*.log
+
+# ---- Virtual Environment ----
+venv/
+ENV/
+env/
+.venv/
+
+# ---- Environment Variables ----
+.env
+.gitignore/.env
+
+# ---- OS-specific ----
+# macOS
+.DS_Store
+# Windows
+Thumbs.db
+
+# ---- IDE / Editor ----
+.vscode/
+.idea/
+
+# ---- Python Build / Packaging ----
+build/
+dist/
+*.egg-info/
+
+# ---- Cache ----
+.cache/
+.pytest_cache/
+.mypy_cache/
+
+# ---- Temporary ----
+uploads/
+tmp/

@@ -20,9 +20,8 @@ async def serve_home(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 # Load .env variables
-#load_dotenv()
+load_dotenv()
 
-load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), ".gitignore", ".env"))
 MURF_API_KEY = os.getenv("MURF_API_KEY")
 aai.settings.api_key = os.getenv("ASSEMBLYAI_API_KEY")
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")  # keep API key in .env

@@ -101,8 +101,8 @@ GEMINI_API_KEY=your_gemini_api_key_here
 1.  **Clone & venv**
 
     ```bash
-    git clone [https://github.com/yourusername/conversational-voice-agent.git](https://github.com/yourusername/conversational-voice-agent.git)
-    cd conversational-voice-agent
+    git clone [https://github.com/SRB1025X/AI_Agents_30days](https://github.com/SRB1025X/AI_Agents_30days)
+    cd AI_Agents_30days
 
     python -m venv venv
     # macOS/Linux
@@ -221,13 +221,6 @@ jinja2
   - [ ] Live waveform + VU meter
   - [ ] Simple admin dashboard for session logs
 
------
-
-## 💡 Pro Tips to Stand Out
-
-  - Add your logo to the header and use a soft animated record button.
-  - Collect feature ideas as GitHub issues and tag them `challenge-day-x`.
-  - Keep short demo clips/GIFs in `static/screenshots/` and reference them here for a great LinkedIn post.
 
 -----
 
@@ -243,6 +236,3 @@ jinja2
 ## 📜 License
 
 MIT — see `LICENSE`.
-
-```
-```

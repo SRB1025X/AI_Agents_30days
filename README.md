@@ -90,7 +90,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 1.  **Clone & venv**
 
     ```bash
-    git clone [https://github.com/SRB1025X/AI_Agents_30days](https://github.com/SRB1025X/AI_Agents_30days)
+    git clone https://github.com/SRB1025X/AI_Agents_30days
     cd AI_Agents_30days
 
     python -m venv venv

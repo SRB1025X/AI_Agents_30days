@@ -6,7 +6,7 @@
 > Built as part of **#30DaysofVoiceAgents** by Murf AI.
 
 <p align="center">
-  <img src="static/screenshots/ui.png" alt="UI Screenshot" width="720" />
+  <img src="static/home.png" alt="UI Screenshot" width="720" />
 </p>
 
 ---

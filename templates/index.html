@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Voice Agent</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes pulse {
+      0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99,102,241,0.6); }
+      70% { transform: scale(1.03); box-shadow: 0 0 0 18px rgba(99,102,241,0); }
+      100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99,102,241,0); }
+    }
+    .pulse { animation: pulse 1.6s infinite; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-indigo-600 via-purple-600 to-fuchsia-600 min-h-screen text-white">
+  <div class="max-w-4xl mx-auto p-6">
+    <header class="text-center mb-8">
+      <h1 class="text-4xl font-bold drop-shadow-sm">🎤 Conversational Voice Agent</h1>
+      <p class="opacity-90 mt-2">Speak to your AI — hands-free, multi-turn, and fast.</p>
+    </header>
+
+    <main class="bg-white/10 backdrop-blur rounded-2xl border border-white/20 p-6 shadow-xl">
+      <!-- Top row: Record button + status -->
+      <div class="flex items-center justify-between gap-4 flex-wrap">
+        <div class="flex items-center gap-3">
+          <button id="recordBtn"
+                  class="w-16 h-16 rounded-full bg-white text-indigo-600 grid place-items-center shadow-lg hover:scale-105 transition-transform"
+                  aria-pressed="false" aria-label="Start Recording">
+            <svg id="micIcon" xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 1 0-6 0v5a3 3 0 0 0 3 3Zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21H9v2h6v-2h-2v-3.08A7 7 0 0 0 19 11h-2Z"/>
+            </svg>
+          </button>
+          <div>
+            <div id="statusText" class="text-sm text-white/90">Tap to start recording</div>
+            <div class="text-xs text-white/70">Session: <span id="sessionIdText"></span></div>
+          </div>
+        </div>
+        <div id="toast" class="hidden text-sm bg-white/20 px-3 py-1.5 rounded-lg border border-white/30"></div>
+      </div>
+
+      <!-- Conversation window -->
+      <section class="mt-6 space-y-3 max-h-[60vh] overflow-y-auto pr-1" id="chatWindow">
+        <!-- Messages appended here -->
+      </section>
+
+      <!-- Hidden audio player for AI voice -->
+      <audio id="aiAudio" class="hidden"></audio>
+    </main>
+
+    <footer class="text-center mt-8 opacity-80 text-sm">
+      Pro tip: The agent auto-listens after it finishes speaking.
+    </footer>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

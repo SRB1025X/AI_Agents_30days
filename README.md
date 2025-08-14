@@ -25,6 +25,10 @@
 
 ## 🧩 Architecture (high level)
 
+<p align="center">
+  <img src="static/Architecture.png" alt="UI Screenshot" width="720" />
+</p>
+
 ```text
 User Voice 🎤
       |

@@ -63,9 +63,6 @@ sequenceDiagram
 ├─ static/
 │  ├─ script.js            # Frontend logic (recording, fetch, playback)
 │  ├─ fallback.mp3         # Fallback audio when APIs fail
-│  └─ screenshots/
-│     ├─ ui.png             # UI screenshot (add your own)
-│     └─ architecture.png   # Architecture diagram (optional)
 ├─ .env                   # API keys (NOT committed)
 ├─ requirements.txt
 └─ README.md

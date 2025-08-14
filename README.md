@@ -1,3 +1,4 @@
+````markdown
 # 🎤 Conversational Voice Agent
 
 > 🗣️ Talk to your AI — get human-like responses back in real time.  
@@ -37,9 +38,11 @@ User Voice 🎤
                                                                             |
                                                                             v
                                        Murf (TTS)  -- mp3 URL ---> [Browser 🔊]
-Mermaid (sequence view)
-Code snippet
+````
 
+### Mermaid (sequence view)
+
+```mermaid
 sequenceDiagram
   participant U as User
   participant B as Browser UI
@@ -59,9 +62,11 @@ sequenceDiagram
   S-->>B: { transcript, llm_text, audio_url }
   B->>B: Play audio + show text
   B->>U: Auto-start next recording
-🗂 Project Structure
-Bash
+```
 
+### 🗂 Project Structure
+
+```bash
 .
 ├─ main.py                # FastAPI app (STT/LLM/TTS endpoints + agent chat)
 ├─ templates/
@@ -75,73 +80,83 @@ Bash
 ├─ .env                   # API keys (NOT committed)
 ├─ requirements.txt
 └─ README.md
-🔑 Environment Variables
-Create a .env in project root:
+```
 
-Code snippet
+### 🔑 Environment Variables
 
+Create a `.env` in project root:
+
+```env
 MURF_API_KEY=your_murf_api_key_here
 ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here
 GEMINI_API_KEY=your_gemini_api_key_here
-Tip: Never commit your .env. Use .gitignore.
+```
 
-⚙️ Setup & Run
-Clone & venv
+**Tip**: Never commit your `.env`. Use `.gitignore`.
 
-Bash
+-----
 
-git clone [https://github.com/yourusername/conversational-voice-agent.git](https://github.com/yourusername/conversational-voice-agent.git)
-cd conversational-voice-agent
+## ⚙️ Setup & Run
 
-python -m venv venv
-# macOS/Linux
-source venv/bin/activate
-# Windows
-venv\Scripts\activate
-Install deps
+1.  **Clone & venv**
 
-Bash
+    ```bash
+    git clone [https://github.com/yourusername/conversational-voice-agent.git](https://github.com/yourusername/conversational-voice-agent.git)
+    cd conversational-voice-agent
 
-pip install -r requirements.txt
-Start the server
+    python -m venv venv
+    # macOS/Linux
+    source venv/bin/activate
+    # Windows
+    venv\Scripts\activate
+    ```
 
-Bash
+2.  **Install deps**
 
-uvicorn main:app --reload
-Open: http://127.0.0.1:8000
+    ```bash
+    pip install -r requirements.txt
+    ```
 
-🔌 API Endpoints (Quick Reference)
-POST /generate-audio
+3.  **Start the server**
 
-Body: {"text": "Hello world"}
+    ```bash
+    uvicorn main:app --reload
+    ```
 
-Resp: {"ok": true, "audio_url": "https://..."} (falls back to /static/fallback.mp3 if needed)
+    Open: `http://127.0.0.1:8000`
 
-POST /transcribe/file
+-----
 
-FormData: file (audio/webm)
+## 🔌 API Endpoints (Quick Reference)
 
-Resp: {"ok": true, "transcript": "..."}
+**`POST /generate-audio`**
 
-POST /llm/query (optional, single-turn)
+  - **Body**: `{"text": "Hello world"}`
+  - **Resp**: `{"ok": true, "audio_url": "https://..."}` (falls back to `/static/fallback.mp3` if needed)
 
-FormData: file (audio/webm)
+**`POST /transcribe/file`**
 
-Resp: {"ok": true, "llm_text": "...", "audio_url": "https://...", "transcript": "..."}
+  - **FormData**: `file` (audio/webm)
+  - **Resp**: `{"ok": true, "transcript": "..."}`
 
-POST /agent/chat/{session_id}
+**`POST /llm/query`** (optional, single-turn)
 
-FormData: file (audio/webm)
+  - **FormData**: `file` (audio/webm)
+  - **Resp**: `{"ok": true, "llm_text": "...", "audio_url": "https://...", "transcript": "..."}`
 
-Resp: {"ok": true, "transcript": "...", "llm_text": "...", "audio_url": "https://..."}
+**`POST /agent/chat/{session_id}`**
 
-Stores conversation in memory (per session_id), sends full history to Gemini (REST), synthesizes Murf mp3.
+  - **FormData**: `file` (audio/webm)
+  - **Resp**: `{"ok": true, "transcript": "...", "llm_text": "...", "audio_url": "https://..."}`
+  - Stores conversation in memory (per `session_id`), sends full history to Gemini (REST), synthesizes Murf mp3.
 
-🧪 CURL Smoke Tests
-Replace YOUR_SESSION_ID first.
+-----
 
-Bash
+## 🧪 CURL Smoke Tests
 
+Replace `YOUR_SESSION_ID` first.
+
+```bash
 # Health check (HTML)
 curl -s [http://127.0.0.1:8000](http://127.0.0.1:8000) | head -n 5
 
@@ -149,68 +164,85 @@ curl -s [http://127.0.0.1:8000](http://127.0.0.1:8000) | head -n 5
 curl -s -X POST [http://127.0.0.1:8000/generate-audio](http://127.0.0.1:8000/generate-audio) \
   -H 'Content-Type: application/json' \
   -d '{"text":"Hello from the voice agent!"}'
-🧱 Error Handling & Fallbacks
-Every external call (STT / LLM / TTS) is wrapped in try/except.
+```
 
-If something fails, the server returns a structured error with stage + error.
+-----
 
-The client displays a message and auto-plays static/fallback.mp3 so the experience never “goes silent”.
+## 🧱 Error Handling & Fallbacks
 
-You can simulate outages by temporarily removing an API key from .env and restarting.
+Every external call (STT / LLM / TTS) is wrapped in `try/except`.
 
-Example server error JSON
+If something fails, the server returns a structured error with `stage` + `error`.
 
-JSON
+The client displays a message and auto-plays `static/fallback.mp3` so the experience never “goes silent”.
 
+You can simulate outages by temporarily removing an API key from `.env` and restarting.
+
+**Example server error JSON**
+
+```json
 {
   "ok": false,
   "stage": "llm",
   "error": "RuntimeError: Gemini HTTP 403: ...details..."
 }
-🧭 Browser Notes (Audio)
-The app records using MediaRecorder: audio/webm;codecs=opus.
+```
 
-Most Chromium browsers support this. Safari users may need to enable microphone permissions and test codec support.
+-----
 
-Autoplay policies vary — the app attempts to play after user gesture (record/stop).
+## 🧭 Browser Notes (Audio)
 
-🧰 Requirements (suggested)
-Plaintext
+  - The app records using `MediaRecorder`: `audio/webm;codecs=opus`.
+  - Most Chromium browsers support this. Safari users may need to enable microphone permissions and test codec support.
+  - Autoplay policies vary — the app attempts to play after user gesture (record/stop).
 
+-----
+
+## 🧰 Requirements (suggested)
+
+```text
 fastapi
 uvicorn
 python-dotenv
 requests
 assemblyai
 jinja2
-(Your requirements.txt may include more, depending on your setup.)
+```
 
-🧭 Roadmap
-[ ] Replace in-memory history with a durable store (SQLite/Redis/Firestore)
+(Your `requirements.txt` may include more, depending on your setup.)
 
-[ ] Multi-voice & style controls for Murf
+-----
 
-[ ] Streamed STT + streamed TTS
+## 🧭 Roadmap
 
-[ ] Live waveform + VU meter
+  - [ ] Replace in-memory history with a durable store (SQLite/Redis/Firestore)
+  - [ ] Multi-voice & style controls for Murf
+  - [ ] Streamed STT + streamed TTS
+  - [ ] Live waveform + VU meter
+  - [ ] Simple admin dashboard for session logs
 
-[ ] Simple admin dashboard for session logs
+-----
 
-💡 Pro Tips to Stand Out
-Add your logo to the header and use a soft animated record button.
+## 💡 Pro Tips to Stand Out
 
-Collect feature ideas as GitHub issues and tag them challenge-day-x.
+  - Add your logo to the header and use a soft animated record button.
+  - Collect feature ideas as GitHub issues and tag them `challenge-day-x`.
+  - Keep short demo clips/GIFs in `static/screenshots/` and reference them here for a great LinkedIn post.
 
-Keep short demo clips/GIFs in static/screenshots/ and reference them here for a great LinkedIn post.
+-----
 
-🙏 Credits
-Murf AI — Text-to-Speech
+## 🙏 Credits
 
-AssemblyAI — Speech-to-Text
+  - **Murf AI** — Text-to-Speech
+  - **AssemblyAI** — Speech-to-Text
+  - **Gemini (REST)** — LLM Responses
+  - **FastAPI** — Web Framework
 
-Gemini (REST) — LLM Responses
+-----
 
-FastAPI — Web Framework
+## 📜 License
 
-📜 License
-MIT — see LICENSE.
+MIT — see `LICENSE`.
+
+```
+```

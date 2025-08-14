@@ -29,22 +29,6 @@
   <img src="static/Architecture.png" alt="UI Screenshot" width="720" />
 </p>
 
-```text
-User Voice 🎤
-      |
-      v
-[Browser UI]  --(audio/webm)-->  [FastAPI Server]
-                                       |
-                                       +--> AssemblyAI (STT)  -- transcript -->
-                                       |
-                                 chat history (session_id)
-                                       |
-                                       +--> Gemini (REST)  -- LLM text ------+
-                                                                            |
-                                                                            v
-                                       Murf (TTS)  -- mp3 URL ---> [Browser 🔊]
-````
-
 ### Mermaid (sequence view)
 
 ```mermaid

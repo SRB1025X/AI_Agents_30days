@@ -1,9 +1,7 @@
 fastapi
-uvicorn
+uvicorn[standard]
 jinja2
 python-dotenv
 requests
-murf
-python-multipart
 assemblyai
-google-generativeai
+pydantic

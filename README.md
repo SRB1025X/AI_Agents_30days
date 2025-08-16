@@ -25,21 +25,9 @@
 
 ## 🧩 Architecture (high level)
 
-```text
-User Voice 🎤
-      |
-      v
-[Browser UI]  --(audio/webm)-->  [FastAPI Server]
-                                       |
-                                       +--> AssemblyAI (STT)  -- transcript -->
-                                       |
-                                 chat history (session_id)
-                                       |
-                                       +--> Gemini (REST)  -- LLM text ------+
-                                                                            |
-                                                                            v
-                                       Murf (TTS)  -- mp3 URL ---> [Browser 🔊]
-````
+<p align="center">
+  <img src="static/Architecture.png" alt="UI Screenshot" width="720" />
+</p>
 
 ### Mermaid (sequence view)
 
@@ -75,9 +63,6 @@ sequenceDiagram
 ├─ static/
 │  ├─ script.js            # Frontend logic (recording, fetch, playback)
 │  ├─ fallback.mp3         # Fallback audio when APIs fail
-│  └─ screenshots/
-│     ├─ ui.png             # UI screenshot (add your own)
-│     └─ architecture.png   # Architecture diagram (optional)
 ├─ .env                   # API keys (NOT committed)
 ├─ requirements.txt
 └─ README.md
@@ -102,7 +87,7 @@ GEMINI_API_KEY=your_gemini_api_key_here
 1.  **Clone & venv**
 
     ```bash
-    git clone [https://github.com/SRB1025X/AI_Agents_30days](https://github.com/SRB1025X/AI_Agents_30days)
+    git clone https://github.com/SRB1025X/AI_Agents_30days
     cd AI_Agents_30days
 
     python -m venv venv

@@ -33,6 +33,7 @@ def _generate_contents(contents: List[Dict], system_instruction: str | None = No
       [{"role":"user","parts":[{"text": "Hello"}]},
        {"role":"model","parts":[{"text":"Hi!"}]}]
     """
+    api_key = api_key or os.getenv("GEMINI_API_KEY", "")
     if not api_key:
         raise RuntimeError("GEMINI_API_KEY missing")
 

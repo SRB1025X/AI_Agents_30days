@@ -3,6 +3,7 @@ import requests, json
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from dotenv import load_dotenv
 from typing import Dict, List
 import os, datetime
 from datetime import datetime
@@ -54,6 +55,11 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 app.include_router(stream_router)
 
+# Load env
+load_dotenv()
+MURF_API_KEY = os.getenv("MURF_API_KEY")
+ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+aai.settings.api_key = ASSEMBLYAI_API_KEY
 FALLBACK_AUDIO_URL = "/static/fallback.mp3"
 
 os.makedirs("uploads", exist_ok=True)
@@ -78,11 +84,12 @@ def _redact(s: str, max_len: int = 300) -> str:
     s = (s or "").strip()
     return s[:max_len] + ("…" if len(s) > max_len else "")
 
-def tavily_search_brief(query: str, api_key: str) -> str:
+def tavily_search_brief(query: str, api_key: str | None = None) -> str:
     """
     Ask Tavily for a concise answer/context we can pass to Gemini.
     Logs request/response details to the terminal.
     """
+    api_key = api_key or os.getenv("TAVILY_API_KEY")
     if not api_key:
         tavily_log.error("missing_api_key")
         raise RuntimeError("TAVILY_API_KEY missing")
@@ -202,7 +209,7 @@ async def upload_audio(file: UploadFile = File(...)):
         return JSONResponse(status_code=500, content=error_json("upload", e))
 
 @app.post("/transcribe/file", response_model=TranscribeResponse)
-async def transcribe_file(file: UploadFile = File(...), assemblyai_api_key: str | None = Form(None)):
+async def transcribe_file(file: UploadFile = File(...)):
     """Speech-to-text with AssemblyAI; returns transcript or structured error."""
     tmp_path = None
     try:
@@ -210,7 +217,7 @@ async def transcribe_file(file: UploadFile = File(...), assemblyai_api_key: str 
             tmp.write(await file.read())
             tmp_path = tmp.name
 
-        text = transcribe_tempfile(tmp_path, api_key=assemblyai_api_key).strip()
+        text = transcribe_tempfile(tmp_path).strip()
         if not text:
             raise RuntimeError("Empty transcript")
         return TranscribeResponse(ok=True, transcript=text)
@@ -246,9 +253,10 @@ async def agent_chat(
 
         # STT
         try:
-            if not assemblyai_api_key:
-                raise RuntimeError("ASSEMBLYAI_API_KEY missing")
-            transcript = transcribe_tempfile(tmp_path, api_key=assemblyai_api_key).strip()
+            transcript = transcribe_tempfile(
+                tmp_path,
+                api_key=assemblyai_api_key or ASSEMBLYAI_API_KEY
+            ).strip()
             if not transcript:
                 raise RuntimeError("Empty transcript")
         except Exception as e:
@@ -264,7 +272,7 @@ async def agent_chat(
         if web_search:
             tavily_log.info("mode web_search_on")
             try:
-                web_ctx = tavily_search_brief(transcript, api_key=tavily_api_key or "")
+                web_ctx = tavily_search_brief(transcript, api_key=tavily_api_key)
                 enriched = (
                     "Use the following web context to answer briefly. "
                     "Do not show raw URLs; refer to sources naturally.\n\n"
@@ -302,21 +310,18 @@ async def agent_chat(
         try:
             log.info(
                 "keys_used aai=%s gemini=%s murf=%s tavily=%s",
-                "user" if assemblyai_api_key else "none",
-                "user" if gemini_api_key else "none",
-                "user" if murf_api_key else "none",
-                "user" if tavily_api_key else "none",
+                "user" if assemblyai_api_key else "env",
+                "user" if gemini_api_key else "env",
+                "user" if murf_api_key else "env",
+                "user" if tavily_api_key else "env",
             )
-            if not gemini_api_key:
-                raise RuntimeError("GEMINI_API_KEY missing")
             llm_text = chat_from_history(history, api_key=gemini_api_key).strip()
             if not llm_text:
                 llm_text = "Let's talk about something else. How can I help you today?"
         except Exception as e:
             log.warning("LLM error on session %s: %s", session_id, e)
             warn = error_json("llm", e, {"transcript": transcript})
-            tts_error = "I'm having trouble connecting right now. Please try again."
-            ok, audio_url, warn = try_murf_tts(tts_error, murf_api_key or "")
+            ok, audio_url, warn = try_murf_tts(llm_text, murf_api_key or MURF_API_KEY)
             return ChatResponse(
                 ok=True,
                 transcript=transcript,
@@ -330,7 +335,7 @@ async def agent_chat(
         history.append({"author": "assistant", "content": llm_text})
 
         # TTS
-        ok, audio_url, warn = try_murf_tts(llm_text, murf_api_key or "")
+        ok, audio_url, warn = try_murf_tts(llm_text, MURF_API_KEY)
         if not ok:
             return ChatResponse(
                 ok=True,
@@ -410,7 +415,7 @@ def on_error(self: Type[StreamingClient], error: StreamingError):
 
 # ---------- WebSocket endpoint that bridges browser -> AAI StreamingClient ----------
 @app.websocket("/ws/transcribe")
-async def ws_transcribe(websocket: WebSocket, session_id: str = Query(default="no-session"), aai_key: str = Query(default="")):
+async def ws_transcribe(websocket: WebSocket, session_id: str = Query(default="no-session")):
     """
     Expect raw PCM16 mono @ 16 kHz bytes over the websocket.
     Sends partial/final transcripts to terminal.
@@ -418,9 +423,6 @@ async def ws_transcribe(websocket: WebSocket, session_id: str = Query(default="n
     """
     await websocket.accept()
     print("[WS] client connected; session:", session_id)
-
-    if aai_key:
-        aai.settings.api_key = aai_key
 
     client = StreamingClient(
         StreamingClientOptions(

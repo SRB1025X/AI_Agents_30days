@@ -147,8 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 let turnSocket;
 function initTurnSocket() {
   try {
-    const aaiKey = localStorage.getItem("key_assemblyai") || "";
-    const url = `ws://${window.location.host}/ws/transcribe?session_id=${encodeURIComponent(sessionId)}${aaiKey ? `&aai_key=${encodeURIComponent(aaiKey)}` : ""}`;
+    const url = `ws://${window.location.host}/ws/transcribe?session_id=${encodeURIComponent(sessionId)}`;
     turnSocket = new WebSocket(url);
 
     turnSocket.onopen = () => {

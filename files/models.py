@@ -15,7 +15,6 @@ def error_json(stage: str, exc: Exception, extra: dict | None = None):
 # ---------- Requests ----------
 class TextInput(BaseModel):
     text: str = Field(..., min_length=1)
-    murf_api_key: Optional[str] = None
 
 # ---------- Responses ----------
 class GenerateAudioResponse(BaseModel):

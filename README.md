@@ -57,15 +57,25 @@ sequenceDiagram
 
 ```bash
 .
-├─ main.py                # FastAPI app (STT/LLM/TTS endpoints + agent chat)
+AI_Agents_30days/
+├─ main.py                     # FastAPI app entry point
+├─ models.py                   # Pydantic request/response schemas
+├─ services/                   # External service integrations
+│  ├─ stt.py                   # AssemblyAI Speech-to-Text wrapper
+│  ├─ llm.py                   # Gemini API (LLM) wrapper
+│  └─ tts.py                   # Murf TTS wrapper with fallback
+├─ utils/
+│  └─ logging_config.py        # Central logging configuration
 ├─ templates/
-│  └─ index.html           # Frontend (Tailwind)
+│  └─ index.html               # Frontend HTML (UI)
 ├─ static/
-│  ├─ script.js            # Frontend logic (recording, fetch, playback)
-│  ├─ fallback.mp3         # Fallback audio when APIs fail
-├─ .env                   # API keys (NOT committed)
-├─ requirements.txt
-└─ README.md
+│  ├─ script.js                # Frontend JS (recording, API calls, UI updates)
+│  └─ fallback.mp3             # Pre-recorded fallback audio
+├─ uploads/                    # Temporary uploaded files (git-ignored)
+├─ .env                        # Environment variables (git-ignored)
+├─ .gitignore                  # Git ignore rules
+├─ requirements.txt            # Python dependencies
+└─ README.md                   # Project documentation
 ```
 
 ### 🔑 Environment Variables

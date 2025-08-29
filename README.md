@@ -8,6 +8,7 @@
 <p align="center">
   <img src="static/Home.png" alt="UI Screenshot" width="720" />
   <img src="static/Result.png" alt="UI Screenshot" width="720" />
+  <img src="static/API.png" alt="UI Screenshot" width="720" />
 </p>
 
 ---

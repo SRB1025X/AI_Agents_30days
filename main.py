@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Request, UploadFile, File, Form
 import requests, json
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from typing import Dict, List
@@ -8,8 +8,8 @@ import os, datetime
 from datetime import datetime
 import assemblyai as aai
 from fastapi import WebSocket, WebSocketDisconnect, Query
+import uvicorn
 from assemblyai import RealtimeTranscriber, RealtimeTranscript
-import threading
 import logging
 from queue import Queue
 import queue
@@ -498,6 +498,28 @@ async def ws_transcribe(websocket: WebSocket, session_id: str = Query(default="n
 @app.get("/test", response_class=HTMLResponse)
 async def serve_test(request: Request):
     return templates.TemplateResponse("streaming-test.html", {"request": request})
+
+# Root (GET/HEAD) for platform probes
+@app.get("/", response_class=PlainTextResponse)
+def root():
+    return "OK"
+
+@app.head("/")
+def root_head():
+    return Response(status_code=200)
+
+# Dedicated health endpoint (use in render.yaml)
+@app.get("/healthz", response_class=PlainTextResponse)
+def healthz():
+    return "healthy"
+if __name__ == "__main__":
+    uvicorn.run(
+        "main:app",
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", "8000")),
+        workers=1,
+        reload=False,  # disable reload in production
+    )
 
 '''@app.websocket("/ws/stream")
 async def ws_stream(

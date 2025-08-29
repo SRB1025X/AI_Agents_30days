@@ -147,9 +147,11 @@ document.addEventListener("DOMContentLoaded", () => {
 let turnSocket;
 function initTurnSocket() {
   try {
+    const wsProto = location.protocol === "https:" ? "wss" : "ws";
     const aaiKey = localStorage.getItem("key_assemblyai") || "";
-    const url = `ws://${window.location.host}/ws/transcribe?session_id=${encodeURIComponent(sessionId)}${aaiKey ? `&aai_key=${encodeURIComponent(aaiKey)}` : ""}`;
-    turnSocket = new WebSocket(url);
+    const qp = new URLSearchParams({ session_id: sessionId });
+    if (aaiKey) qp.set("aai_key", aaiKey);
+    const url = `${wsProto}://${location.host}/ws/transcribe?${qp.toString()}`;    turnSocket = new WebSocket(url);
 
     turnSocket.onopen = () => {
       console.log("[TurnWS] open");

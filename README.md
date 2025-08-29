@@ -1,5 +1,5 @@
 
-# 🎤 Conversational Voice Agent
+# 🎤 DoraBot - Your real-time Doraemon-inspired AI companion that listens, thinks, and speaks back with personality.
 
 > 🗣️ Talk to your AI — get human-like responses back in real time.  
 > Powered by **AssemblyAI** (STT) + **Gemini (REST)** (LLM) + **Murf** (TTS).  

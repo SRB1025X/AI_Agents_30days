@@ -1,33 +1,49 @@
 
-# 🎤 DoraBot - Your real-time Doraemon-inspired AI companion that listens, thinks, and speaks back with personality.
+# DoraBot
+**Your real-time Doraemon-inspired AI companion that listens, thinks, and speaks back with personality.**
 
-> 🗣️ Talk to your AI — get human-like responses back in real time.  
-> Powered by **AssemblyAI** (STT) + **Gemini (REST)** (LLM) + **Murf** (TTS).  
-> Built as part of **#30DaysofVoiceAgents** by Murf AI.
+DoraBot is a complete **voice agent pipeline** that combines speech recognition, LLM reasoning, persona-based responses, and real-time speech synthesis — all streamed seamlessly to the client UI.
+
+---
+
+## ✨ Features
+
+- 🎤 **Speech-to-Text (ASR)**: Uses [AssemblyAI](https://www.assemblyai.com/) to transcribe microphone input with turn detection.  
+- 🧠 **Conversational Intelligence (LLM)**: Streams responses from [Google Gemini](https://ai.google.dev/) token by token for low-latency replies.  
+- 🎭 **Persona Layer**: Responses adopt a Doraemon-inspired persona — cheerful, gadget-loving, and fun.  
+- 🌍 **Special Skills**:
+  - **Web Search (Tavily API)** – fetches real-time information when the search toggle is ON.  
+  - **Concise Mode** – toggle for short answers (≤ 3 sentences).  
+- 🔊 **Text-to-Speech (TTS)**: Streams base64 audio chunks from [Murf](https://murf.ai/) over WebSockets and plays them seamlessly in the browser using `AudioContext`.  
+- 💬 **Chat History**: Maintains conversational context across turns.  
+- ⚡ **Streaming Pipeline**: End-to-end flow:  
+Microphone 🎤 → AssemblyAI → Gemini → (Tavily + Persona) → Murf → Client Audio 🎧
+
+- 🌐 **Deployment Ready**: Hostable on [Render.com](https://render.com/) free tier or any cloud platform.  
+- 🔑 **User Configurable Keys**: UI panel to input API keys securely at runtime (no need to edit `.env`).  
+
+---
 
 <p align="center">
-  <img src="static/Home.png" alt="UI Screenshot" width="720" />
+  <img src="static/Home.png" alt="UI Screenshot" width="720" />
   <img src="static/Chat.png" alt="UI Screenshot" width="720" />
   <img src="static/API.png" alt="UI Screenshot" width="720" />
 </p>
 
 ---
 
-## ✨ What’s inside
+## 🛠️ Tech Stack
 
-- 🎙️ **Hands-free voice chat** — record in browser, hear responses automatically
-- 🧠 **Multi-turn memory** — session-based chat history with `session_id`
-- 🛡️ **Resilient by design** — graceful fallbacks for STT/LLM/TTS failures
-- ⚡ **FastAPI backend** — simple endpoints for TTS, STT, LLM, and agent chat
-- 🎨 **Tailwind UI** — clean, responsive, and mobile-friendly
-- 🔁 **Auto-continue** — re-starts recording after AI audio finishes
+- **Backend**: FastAPI, WebSockets, Python  
+- **Frontend**: Vanilla JS + HTML + AudioContext for playback  
+- **APIs**: AssemblyAI (ASR), Gemini API (LLM), Murf (TTS), Tavily (Web Search)  
 
 ---
 
 ## 🧩 Architecture (high level)
 
 <p align="center">
-  <img src="static/Architecture.png" alt="UI Screenshot" width="720" />
+  <img src="static/Architecture.png" alt="UI Screenshot" width="720" />
 </p>
 
 ### Mermaid (sequence view)
@@ -52,7 +68,48 @@ sequenceDiagram
   S-->>B: { transcript, llm_text, audio_url }
   B->>B: Play audio + show text
   B->>U: Auto-start next recording
+
 ```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repo
+```bash
+git clone https://github.com/your-username/dorabot.git
+cd dorabot
+```
+### 2. Install Dependencies
+```bash
+pip install -r requirements.txt
+```
+### 3. Set Up API Keys
+```bash
+DoraBot requires 4 API keys:
+
+ASSEMBLYAI_API_KEY
+GEMINI_API_KEY (or GOOGLE_API_KEY)
+MURF_API_KEY
+TAVILY_API_KEY
+
+You can enter them in the UI config panel at runtime
+```
+### 4. Run the Server
+```bash
+python server.py
+```
+Server will start on:
+```bash
+ws://localhost:8765
+```
+### 5. Open the Client
+
+Open client.html in your browser.
+
+Enter your API keys in the config panel.
+
+Speak into the mic and interact with DoraBot 🎧
 
 ### 🗂 Project Structure
 
@@ -79,157 +136,34 @@ AI_Agents_30days/
 └─ README.md                   # Project documentation
 ```
 
-### 🔑 Environment Variables
 
-Create a `.env` in project root:
+### 📦 Deployment
 
-```env
-MURF_API_KEY=your_murf_api_key_here
-ASSEMBLYAI_API_KEY=your_assemblyai_api_key_here
-GEMINI_API_KEY=your_gemini_api_key_here
-```
+You can host DoraBot on Render.com or any cloud provider.
 
-**Tip**: Never commit your `.env`. Use `.gitignore`.
+Push the repo to GitHub
 
------
+Connect to Render
 
-## ⚙️ Setup & Run
+Add the required environment variables in the Render dashboard
 
-1.  **Clone & venv**
+Deploy 🎉
 
-    ```bash
-    git clone https://github.com/SRB1025X/AI_Agents_30days
-    cd AI_Agents_30days
+### 🔒 Security Notes
 
-    python -m venv venv
-    # macOS/Linux
-    source venv/bin/activate
-    # Windows
-    venv\Scripts\activate
-    ```
+Keep your API keys safe — never commit them to GitHub.
 
-2.  **Install deps**
+Keys can be pasted in the UI for testing, but always reset them if shared.
 
-    ```bash
-    pip install -r requirements.txt
-    ```
+Free-tier limits apply — check Murf, AssemblyAI, Tavily, and Gemini dashboards.
 
-3.  **Start the server**
+### 🙌 Acknowledgements
 
-    ```bash
-    uvicorn main:app --reload
-    ```
+Built as part of 30 Days of Voice Agents Challenge with:
 
-    Open: `http://127.0.0.1:8000`
+[Murf AI](https://murf.ai/)
+[AssemblyAI](https://www.assemblyai.com/)
+[Google Gemini API](https://ai.google.dev/)
+[Tavily](https://www.tavily.com/)
 
------
-
-## 🔌 API Endpoints (Quick Reference)
-
-**`POST /generate-audio`**
-
-  - **Body**: `{"text": "Hello world"}`
-  - **Resp**: `{"ok": true, "audio_url": "https://..."}` (falls back to `/static/fallback.mp3` if needed)
-
-**`POST /transcribe/file`**
-
-  - **FormData**: `file` (audio/webm)
-  - **Resp**: `{"ok": true, "transcript": "..."}`
-
-**`POST /llm/query`** (optional, single-turn)
-
-  - **FormData**: `file` (audio/webm)
-  - **Resp**: `{"ok": true, "llm_text": "...", "audio_url": "https://...", "transcript": "..."}`
-
-**`POST /agent/chat/{session_id}`**
-
-  - **FormData**: `file` (audio/webm)
-  - **Resp**: `{"ok": true, "transcript": "...", "llm_text": "...", "audio_url": "https://..."}`
-  - Stores conversation in memory (per `session_id`), sends full history to Gemini (REST), synthesizes Murf mp3.
-
------
-
-## 🧪 CURL Smoke Tests
-
-Replace `YOUR_SESSION_ID` first.
-
-```bash
-# Health check (HTML)
-curl -s [http://127.0.0.1:8000](http://127.0.0.1:8000) | head -n 5
-
-# TTS test
-curl -s -X POST [http://127.0.0.1:8000/generate-audio](http://127.0.0.1:8000/generate-audio) \
-  -H 'Content-Type: application/json' \
-  -d '{"text":"Hello from the voice agent!"}'
-```
-
------
-
-## 🧱 Error Handling & Fallbacks
-
-Every external call (STT / LLM / TTS) is wrapped in `try/except`.
-
-If something fails, the server returns a structured error with `stage` + `error`.
-
-The client displays a message and auto-plays `static/fallback.mp3` so the experience never “goes silent”.
-
-You can simulate outages by temporarily removing an API key from `.env` and restarting.
-
-**Example server error JSON**
-
-```json
-{
-  "ok": false,
-  "stage": "llm",
-  "error": "RuntimeError: Gemini HTTP 403: ...details..."
-}
-```
-
------
-
-## 🧭 Browser Notes (Audio)
-
-  - The app records using `MediaRecorder`: `audio/webm;codecs=opus`.
-  - Most Chromium browsers support this. Safari users may need to enable microphone permissions and test codec support.
-  - Autoplay policies vary — the app attempts to play after user gesture (record/stop).
-
------
-
-## 🧰 Requirements (suggested)
-
-```text
-fastapi
-uvicorn
-python-dotenv
-requests
-assemblyai
-jinja2
-```
-
-(Your `requirements.txt` may include more, depending on your setup.)
-
------
-
-## 🧭 Roadmap
-
-  - [ ] Replace in-memory history with a durable store (SQLite/Redis/Firestore)
-  - [ ] Multi-voice & style controls for Murf
-  - [ ] Streamed STT + streamed TTS
-  - [ ] Live waveform + VU meter
-  - [ ] Simple admin dashboard for session logs
-
-
------
-
-## 🙏 Credits
-
-  - **Murf AI** — Text-to-Speech
-  - **AssemblyAI** — Speech-to-Text
-  - **Gemini (REST)** — LLM Responses
-  - **FastAPI** — Web Framework
-
------
-
-## 📜 License
-
-MIT — see `LICENSE`.
+Special thanks to the community for the support 💙
